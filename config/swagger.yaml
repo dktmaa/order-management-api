@@ -1,0 +1,1393 @@
+openapi: 3.0.1
+info:
+  description: Order Management MicroService for Node JS 301 Course
+  version: 1.0.0
+  title: 
+servers:
+  - url: "http://localhost:3002/api/v1"
+    description: Dev Environment
+
+tags:
+  - name: Order
+    description: APIs related to order
+
+
+paths:
+  
+components:
+  schemas:
+    Error:
+      required:
+        - name
+        - message
+        - debugId
+      properties:
+        statusCode:
+          type: number
+          enum:
+            - 4XX
+            - 5XX
+        name:
+          type: string
+          description: A human-readable, unique name for the error
+        details:
+          oneOf:
+            - type: string
+            - type: array
+        debugId:
+          type: string
+          description: A unique error identifier generated on the server-side and logged for correlation purposes.
+        message:
+          type: string
+          description: A human-readable message, describing the error
+
+    Candidate:
+      required:
+        - destination
+        - emailAddress
+        - fullname
+        - level
+        - status
+      type: object
+      properties:
+        candidateId:
+          type: string
+        fullname:
+          type: string
+        partyType:
+          type: string
+          description: The Party Type
+          enum:
+            - person
+        departure:
+          $ref: "#/components/schemas/Address"
+        destination:
+          $ref: "#/components/schemas/Address"
+        status:
+          type: string
+          description: Candidate Status
+          enum:
+            - Invitation Not Sent
+            - Invitation Sent
+            - Needs Assessment Overdue
+            - Pending Van Line Quote
+            - Ready for Review
+            - Cancelled
+        emailAddress:
+          type: string
+        phoneNumber:
+          type: string
+        businessUnit:
+          type: string
+        invitationSentDate:
+          type: string
+          format: date-time
+        createdDate:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+          description: _id of the persons who is requesting to Add Candidate
+        lastUpdatedDate:
+          type: string
+          format: date-time
+        noOfRooms:
+          type: string
+          description: Number Of Rooms at Departure Location
+        housingType:
+          type: string
+          description: housing Type at Departure Location
+          enum:
+            - House
+            - Apartment
+            - TempHousing
+        noOfPeople:
+          type: string
+          description: Total Number of People Realocating
+        level:
+          type: string
+          description: The Salary Range Level of the Employee
+        clientId:
+          type: string
+
+    AddCandidate:
+      required:
+        - fullname
+        - createdBy
+      type: object
+      properties:
+        fullname:
+          type: string
+        partyType:
+          type: string
+          description: The Party Type
+          enum:
+            - person
+        departure:
+          $ref: "#/components/schemas/Address"
+        destination:
+          $ref: "#/components/schemas/Address"
+        status:
+          type: string
+          description: Candidate Status
+          enum:
+            - Invitation Not Sent
+            - Invitation Sent
+            - Needs Assessment Overdue
+            - Pending Van Line Quote
+            - Ready for Review
+            - Cancelled
+        emailAddress:
+          type: string
+        phoneNumber:
+          type: string
+        businessUnit:
+          type: string
+        invitationSentDate:
+          type: string
+          format: date-time
+        createdDate:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+          description: _id of the persons who is requesting to Add Candidate
+        lastUpdatedDate:
+          type: string
+          format: date-time
+        noOfRooms:
+          type: string
+          description: Number Of Rooms at Departure Location
+        housingType:
+          type: string
+          description: housing Type at Departure Location
+          enum:
+            - House
+            - Apartment
+            - TempHousing
+        noOfPeople:
+          type: string
+          description: Total Number of People Realocating
+        level:
+          type: string
+        clientId:
+          type: string
+
+    DuplicateCandidate:
+      required:
+        - clientContactId
+        - emailId
+        - departureAddress
+        - destinationAddress
+
+      type: object
+      properties:
+        emailId:
+          type: string
+          description: Valid Email Id of a candidate (case-sensitive).
+        clientId:
+          type: string
+          description: Valid clientId.
+        clientContactId:
+          type: string
+          description: Valid clientContactId.
+        departureAddress:
+          required:
+            - city
+            - state
+          type: object
+          properties:
+            city:
+              type: string
+              description: City of departure.
+            state:
+              type: string
+              description: State of departure.
+        destinationAddress:
+          required:
+            - city
+            - state
+          type: object
+          properties:
+            city:
+              type: string
+              description: City of destination.
+            state:
+              type: string
+              description: State of destination.
+
+    DuplicateCandidateResponse:
+      type: object
+      properties:
+        duplicateStatus:
+          type: boolean
+          description: If true, duplicate found else not found.
+        description:
+          type: string
+
+    UpdateCandidate:
+      oneOf:
+        - $ref: "#/components/schemas/UpdateCandidateWithStatusInvitationSent"
+        - $ref: "#/components/schemas/UpdateCandidateWithStatusInvitationNotSent"
+
+    UpdateCandidateWithStatusInvitationSent:
+      required:
+        - candidateId
+        - fullname
+        - emailAddress
+        - phoneNumber
+        - destination
+        - level
+        - status
+        - createdBy
+      type: object
+      properties:
+        candidateId:
+          type: string
+        fullname:
+          type: string
+        partyType:
+          type: string
+          description: The Party Type
+          enum:
+            - person
+        departure:
+          $ref: "#/components/schemas/Address"
+        destination:
+          $ref: "#/components/schemas/Address"
+        status:
+          type: string
+          description: Candidate Status
+          enum:
+            - Invitation Not Sent
+            - Invitation Sent
+            - Needs Assessment Overdue
+            - Pending Van Line Quote
+            - Ready for Review
+            - Cancelled
+        emailAddress:
+          type: string
+        phoneNumber:
+          type: string
+        businessUnit:
+          type: string
+        invitationSentDate:
+          type: string
+          format: date-time
+        createdDate:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+          description: _id of the persons who is requesting to Add Candidate
+        lastUpdatedDate:
+          type: string
+          format: date-time
+        noOfRooms:
+          type: string
+          description: Number Of Rooms at Departure Location
+        housingType:
+          type: string
+          description: housing Type at Departure Location
+          enum:
+            - House
+            - Apartment
+            - TempHousing
+        noOfPeople:
+          type: string
+          description: Total Number of People Realocating
+        level:
+          type: string
+          description: The Salary Range Level of the Employee
+        clientId:
+          type: string
+
+    UpdateCandidateWithStatusInvitationNotSent:
+      required:
+        - candidateId
+        - fullname
+        - status
+        - createdBy
+      type: object
+      properties:
+        candidateId:
+          type: string
+        fullname:
+          type: string
+        partyType:
+          type: string
+          description: The Party Type
+          enum:
+            - person
+        departure:
+          $ref: "#/components/schemas/Address"
+        destination:
+          $ref: "#/components/schemas/Address"
+        status:
+          type: string
+          description: Candidate Status
+          enum:
+            - Invitation Not Sent
+            - Invitation Sent
+            - Needs Assessment Overdue
+            - Pending Van Line Quote
+            - Ready for Review
+            - Cancelled
+        emailAddress:
+          type: string
+        phoneNumber:
+          type: string
+        businessUnit:
+          type: string
+        invitationSentDate:
+          type: string
+          format: date-time
+        createdDate:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+          description: _id of the persons who is requesting to Add Candidate
+        lastUpdatedDate:
+          type: string
+          format: date-time
+        noOfRooms:
+          type: string
+          description: Number Of Rooms at Departure Location
+        housingType:
+          type: string
+          description: housing Type at Departure Location
+          enum:
+            - House
+            - Apartment
+            - TempHousing
+        clientId:
+          type: string
+        noOfPeople:
+          type: string
+          description: Total Number of People Realocating
+        level:
+          type: string
+          description: The Salary Range Level of the Employee
+
+    AuthorizeTransferee:
+      required:
+        - jobStartDate
+        - status
+        - candidateId
+        - clientContactId
+        - invoiceId
+      type: object
+      properties:
+        jobStartDate:
+          type: string
+        candidateId:
+          type: string
+        clientId:
+          type: string
+        clientContactId:
+          type: string
+        status:
+          type: string
+          enum:
+            - Payment Pending
+        authorizedBy:
+          type: string
+        authorizedDate:
+          type: string
+        invoiceId:
+          type: string
+
+    NeedsAssessment:
+      type: object
+      properties:
+        candidateId:
+          type: string
+          minLength: 24
+          maxLength: 24
+        familyDetails:
+          $ref: "#/components/schemas/FamilyDetails"
+        departureAddr:
+          $ref: "#/components/schemas/Address"
+        destinationAddr:
+          $ref: "#/components/schemas/Address"
+        residenceDetails:
+          $ref: "#/components/schemas/ResidenceDetails"
+        contactNumber:
+          type: string
+          minLength: 10
+          maxLength: 10
+        estimatedMoveStartDate:
+          type: string
+        estimatedMoveEndDate:
+          type: string
+
+    FamilyDetails:
+      type: object
+      properties:
+        familyRelocationStatus:
+          description: Whether the family is relocating with the Tranferee or not
+          type: string
+          enum:
+            - Yes
+            - No
+        noOfRelocatePeople:
+          description: The number of people relocating, if the family is relocating with the Tranferee, Mandatory if familyRelocationStatus is 'Yes'
+          type: string
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4+
+
+    ResidenceDetails:
+      type: object
+      properties:
+        ownerStatus:
+          description: The ownership status of the residence,  Case Sensitive
+          type: string
+          enum:
+            - Own
+            - Rent
+        homeType:
+          description: The type of residence,  Case Sensitive
+          type: string
+          enum:
+            - House
+            - Apartment/Condo/Co-Op
+            - Townhouse
+        noOfRooms:
+          type: number
+          minimum: 1
+
+    Address:
+      type: object
+      required:
+        - fullAddress
+        - city
+        - state
+      properties:
+        streetAddress:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipcode:
+          type: string
+        country:
+          type: string
+        fullAddress:
+          type: string
+
+    Budget:
+      type: object
+      properties:
+        coreBenefits:
+          $ref: "#/components/schemas/CoreSpend"
+        flexSpend:
+          type: array
+          items:
+            $ref: "#/components/schemas/FlexSpend"
+        coreBudgetTotal:
+          type: number
+        flexSpendTotal:
+          type: number
+        grossUpRate:
+          type: number
+        isTaxEnabled:
+          type: boolean
+        UserBudget:
+          type: number
+        candidate:
+          $ref: "#/components/schemas/Candidate"
+        needsAssessment:
+          $ref: "#/components/schemas/NeedsAssessment"
+        authorizedBy:
+          type: string
+        authorizedDate:
+          type: string
+        invoiceId:
+          type: string
+
+    FlexSpend:
+      type: object
+      properties:
+        budgetName:
+          type: string
+        budgetDesc:
+          type: string
+        budgetRangeMin:
+          type: number
+        budgetRangeMax:
+          type: number
+        budgetAmount:
+          type: number
+
+    CoreSpend:
+      type: object
+      properties:
+        budgetName:
+          type: string
+        budgetDesc:
+          type: string
+        insuranceAmount:
+          type: number
+        bidAmount:
+          type: number
+        budgetAmount:
+          type: number
+    MovePhase:
+      type: object
+      properties:
+        order:
+          type: string
+        phase:
+          type: string
+        status:
+          type: boolean
+        date:
+          type: string
+        dateLabel:
+          type: string
+    ScheduleMove:
+      required:
+        - candidateId
+        - clientId
+        - clientContactId
+        - preferredEmailAddress
+        - preferredPhoneNumber
+        - estimatedMoveStartDate
+        - estimatedMoveEndDate
+        - destinationAddr
+        - comments
+        - moveRegisteredDate
+      type: object
+      properties:
+        candidateId:
+          type: string
+        clientId:
+          type: string
+        clientContactId:
+          type: string
+        preferredEmailAddress:
+          type: string
+        preferredPhoneNumber:
+          type: string
+        estimatedMoveStartDate:
+          type: string
+        estimatedMoveEndDate:
+          type: string
+        destinationAddr:
+          $ref: "#/components/schemas/Address"
+        comments:
+          type: string
+        moveRegisteredDate:
+          type: string
+
+    MoveBudgetDetails:
+      type: object
+      properties:
+        moveId:
+          type: string
+        coreBenefits:
+          $ref: "#/components/schemas/CoreBenefits"
+        destinationAddr:
+          $ref: "#/components/schemas/Address"
+        authorizedAmt:
+          type: number
+        flexSpendTotal:
+          type: number
+        fullName:
+          type: string
+        contactNumber:
+          type: string
+        emailAddress:
+          type: string
+        estimatedMoveStartDate:
+          type: string
+        estimatedMoveEndDate:
+          type: string
+        cashedOutDate:
+          type: string
+          format: Date
+        ScheduledMoveDate:
+          type: string
+          format: Date
+        rewardRequestedDate:
+          type: string
+          format: Date
+        isAuthorized:
+          type: boolean
+        services:
+          type: array
+          items:
+            $ref: "#/components/schemas/ServiceDetails"
+
+    ServiceDetails:
+      type: object
+      properties:
+        service:
+          type: string
+        company:
+          type: string
+        contactName:
+          type: string
+        contactNumber:
+          type: string
+        contactEmail:
+          type: string
+        website:
+          type: string
+
+    CoreBenefits:
+      type: object
+      properties:
+        insuranceAmount:
+          type: number
+        bidAmount:
+          type: number
+
+    EPInfo:
+      type: object
+      properties:
+        bankName:
+          type: string
+        addrLine1:
+          type: string
+        addrLine2:
+          type: string
+        aba_RoutingNumber:
+          type: string
+        accountName:
+          type: string
+        accountNumber:
+          type: string
+        swift_BICCode:
+          type: string
+          
+    QuoteRequest:
+      required:
+        - onBehalfOf
+        - applicationSource
+        - orderRequestId
+        - quoteRequestId
+        - orderDate
+        - requestedBy
+        - requestedFrom
+        - forDeliveryTo
+        - departureAddress
+        - departureCity
+        - departureState
+        - departurePostalCode
+        - destinationCity
+        - destinationState
+        - numberOfPeopleMoving
+        - numberRooms
+        - propertyType
+        - ownRent
+        - emailAddress
+        - phoneNumber
+        - estMoveStartDate
+        - estMoveEndDate
+      type: object
+      properties:
+        onBehalfOf:
+          type: string
+          example: "Microsoft"
+        applicationSource:
+          type: string
+          example: "Alpha"
+        orderRequestId:
+          type: string
+          example: "0001"
+        quoteRequestId:
+          type: string
+          example: "BO0001"
+        orderDate:
+          type: string
+          format: date-time
+          example: "2019 Oct 17"
+        requestedBy:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "Monica Joseph"
+        requestedFrom:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "Irene Bensely"
+        forDeliveryTo:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "Irene Bensely"
+        departureAddress:
+          type: string
+          example: "Newport, OR"
+        departureCity:
+          type: string
+          example: "Newport"
+        departureState:
+          type: string
+          example: "Oregon"
+        departurePostalCode:
+          type: string
+          example: "97365"
+        destinationaddress:
+          type: string
+          example: "Morgantown, WV"
+        destinationCity:
+          type: string
+          example: "Morgantown"
+        destinationState:
+          type: string
+          example: "West Virginia"
+        destinationPostalCode:
+          type: string
+          example: "26504"
+        numberOfPeopleMoving:
+          type: number
+          example: "3"
+        numberRooms:
+          type: number
+          example: "2"
+        propertyType:
+          type: string
+          example: "Apartments"
+        ownRent:
+          type: string
+          example: "Own"
+        emailAddress:
+          type: array
+          items:
+            type: string
+            example:
+              - Irene.bensely12@microsoft.com
+              - Irene.bensely10@microsoft.com
+        phoneNumber:
+          type: array
+          items:
+            type: string
+            example:
+              - 9876543210
+              - 9876121924
+        estMoveStartDate:
+          type: string
+          format: date-time
+          example: "2019 Oct 30"
+        estMoveEndDate:
+          type: string
+          format: date-time
+          example: "2019 Nov 17"
+
+    QuoteResponse:
+      required:
+        - orderRequestId
+        - quoteRequestId
+        - referenceNumber
+        - bidDate
+        - bidAmount
+        - bidAmountCurrency
+        - estimatedWeight
+        - estimatedWeightUnit
+        - estimatedDistance
+        - estimatedDistanceUnit
+      type: object
+      properties:
+        orderRequestId:
+          type: string
+          example: "100191"
+        quoteRequestId:
+          type: string
+          example: "23"
+        referenceNumber:
+          type: string
+          example: "12345"
+        bidDate:
+          type: string
+          format: date-time
+          example: "2019 Oct 19"
+        bidAmount:
+          type: string
+          example: "540"
+        bidAmountCurrency:
+          type: string
+          example: "dollar"
+        bidAmountStorage:
+          type: string
+          example: "387"
+        bidAmountStorageCurrency:
+          type: string
+          example: "dollar"
+        estimatedWeight:
+          type: number
+          example: 1250
+        estimatedWeightUnit:
+          type: string
+          example: "lbs"
+        estimatedDistance:
+          type: number
+          example: 2417
+        estimatedDistanceUnit:
+          type: string
+          example: "miles"
+
+    MoveRequest:
+      required:
+        - onBehalfOf
+        - orderId
+        - bidAmount
+        - bidAmountCurrency
+        - fromRequest
+        - orderDate
+        - orderedBy
+        - referenceNumber
+        - bookedWith
+        - deliveredTo
+        - emailAddress
+        - phoneNumber
+        - estMoveStartDate
+        - estMoveEndDate
+        - departureAddress
+        - departureCity
+        - departureState
+        - departurePostalCode
+        - destinationCity
+        - destinationState
+
+      type: object
+      properties:
+        onBehalfOf:
+          type: string
+          example: "Microsoft"
+        orderId:
+          type: string
+          example: "0001"
+        bidAmount:
+          type: string
+          example: "321"
+        bidAmountCurrency:
+          type: string
+          example: "dollar"
+        bidAmountStorage:
+          type: string
+          example: "219"
+        bidAmountStorageCurrency:
+          type: string
+          example: "dollar"
+        fromRequest:
+          type: string
+          example: "100191"
+        orderDate:
+          type: string
+          format: date-time
+          example: "2019 Oct 17"
+        orderedBy:
+          type: string
+          example: "Monica Joseph"
+        referenceNumber:
+          type: string
+          example: "12345"
+        bookedWith:
+          type: string
+          example: "Francis Bensely"
+        deliveredTo:
+          type: string
+          example: "Irene Bensely"
+        emailAddress:
+          type: string
+          example: "Irene.bensely12@microsoft.com"
+        phoneNumber:
+          type: string
+          example: "9876543210"
+        estMoveStartDate:
+          type: string
+          format: date-time
+          example: "2019 Oct 30"
+        estMoveEndDate:
+          type: string
+          format: date-time
+          example: "2019 Nov 17"
+        departureAddress:
+          type: string
+          example: "Newport, OR"
+        departureCity:
+          type: string
+          example: "Newport"
+        departureState:
+          type: string
+          example: "Oregon"
+        departurePostalCode:
+          type: string
+          example: "97365"
+        destinationaddress:
+          type: string
+          example: "Morgantown, WV"
+        destinationCity:
+          type: string
+          example: "Morgantown"
+        destinationState:
+          type: string
+          example: "West Virginia"
+        destinationPostalCode:
+          type: string
+          example: "26504"
+        comment:
+          type: string
+          example: "Move Request"
+
+    MoveResponse:
+      required:
+        - referenceNumber
+        - orderAcknowledgementDate
+      type: object
+      properties:
+        referenceNumber:
+          type: string
+          example: "100191"
+        orderAcknowledgementDate:
+          type: string
+          example: "2019 Oct 17"
+        bookedWithContactName:
+          type: string
+          example: "Francis Bensely"
+        bookedWithContactPhone:
+          type: string
+          example: "9087653412"
+        bookedWithContactEmail:
+          type: string
+          example: "Francis.Bensely@gmail.com"
+        packDates:
+          type: object
+          properties:
+            estimatedStartDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            estimatedEndDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            revisedStartDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            revisedEndDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            actualDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+        loadDates:
+          type: object
+          properties:
+            estimatedStartDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            estimatedEndDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            revisedStartDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            revisedEndDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            actualDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+        StorageInDates:
+          type: object
+          properties:
+            estimatedStartDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            estimatedEndDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            revisedStartDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            revisedEndDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+        StorageOutDates:
+          type: object
+          properties:
+            estimatedStartDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            estimatedEndDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            revisedStartDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            revisedEndDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+        storageInDates:
+          type: object
+          properties:
+            actualDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+        storageOutDates:
+          type: object
+          properties:
+            actualDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+        deliveryDates:
+          type: object
+          properties:
+            estimatedStartDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            estimatedEndDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            revisedStartDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            revisedEndDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            actualStartDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+            actualEndDate:
+              type: string
+              format: date-time
+              example: "2019 Oct 19"
+
+    GetAuthorizedTransferees:
+      type: object
+      properties:
+        transfereeId:
+          type: string
+        candidate:
+          $ref: "#/components/schemas/Candidate"
+        authorizedAmt:
+          type: string
+        status:
+          type: string
+        lastUpdatedDate:
+          type: string
+        authorizedBy:
+          type: string
+        authorizedDate:
+          type: string
+        latestMilestone:
+          type: string
+        movePhase:
+          type: array
+          items:
+            $ref: "#/components/schemas/MovePhase"
+        jobStartDate:
+          type: string
+        remainingAmt:
+          type: string
+          
+    GetAuthorizeTransfereeDetails:
+      type: object
+      properties:
+        coreBenefits:
+          $ref: "#/components/schemas/CoreSpend"
+        flexSpend:
+          type: array
+          items:
+            $ref: "#/components/schemas/FlexSpend"
+        coreBudgetTotal:
+          type: number
+        flexSpendTotal:
+          type: number
+        grossUpRate:
+          type: number
+        isTaxEnabled:
+          type: boolean
+        UserBudget:
+          type: number
+        candidate:
+          $ref: "#/components/schemas/Candidate"
+        needsAssessment:
+          $ref: "#/components/schemas/NeedsAssessment"
+        approvedMoves: 
+          $ref: "#/components/schemas/GetAuthorizedTransferees"
+        timelineDetails:
+           $ref: "#/components/schemas/TimeLineDate"
+          
+    getclient:
+      required:
+        - clientContactId
+      type: object
+      properties:
+        clientContactId:
+          type: string 
+          
+    getInvoiceData:
+      required:
+        - client
+      type: object
+      properties:
+        invoice:
+          type: string 
+    
+    TransfereeDetails:
+      type: object
+      properties:
+        salutation:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        preferredName:
+          type: string
+        companyName:
+          type: string
+        jobStartDate:
+          type: string
+        contactNumber:
+          type: string
+        emailAddress:
+          type: string
+          
+    SaveTransferee:
+      required:
+        - candidateId
+        - firstName
+        - lastName
+      type: object
+      properties:
+        candidateId:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        salutation:
+          type: string
+        preferredName:
+          type: string
+          
+    TimeLineDate: 
+      type: object
+      properties: 
+        serviceName: 
+          type: string 
+        serviceDesc: 
+          type: string 
+        startDate: 
+          type: string 
+        endDate: 
+          type: string 
+        serviceType: 
+          type: string 
+          enum:
+            - estimated
+            - actual
+            - others
+        sortOrder: 
+          type: number 
+        isActualAvailable: 
+          type: boolean 
+          
+    PutRewards:
+      type: object
+      properties: 
+        candidateId:
+          type: string 
+        clientContactId: 
+          type: string 
+        contactName: 
+          type: string 
+        contactNumber: 
+          type: string 
+        isAuthorized: 
+          type: boolean 
+    
+    getMoveTask:
+      type: object
+      properties:
+        taskCode:
+          type: string
+        taskDetail:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+     
+    updateMoveTask:
+      required:
+        - candidateId
+        - taskId
+        - isCompleted
+      type: object
+      properties:
+        taskId:
+          type: string
+        isCompleted:
+          type: boolean
+        candidateId:
+          type: string
+    
+    ClientEmployeeDetails:
+      type: object
+      properties:
+        clientId:
+          type: string
+        employeeId:
+          type: string
+        name:
+          type: string
+        emailAddress:
+          type: string
+        roles:
+          $ref: "#/components/schemas/Roles"
+
+    UpdateClientEmployeeDetails:
+      type: object
+      properties:
+        clientId:
+          type: string
+        employeeId:
+          type: string
+        roles:
+          $ref: "#/components/schemas/Roles"
+          
+    Roles:
+      type: object
+      properties:
+        key:
+          type: string
+        roleName:
+          type: string
+        status:
+          type: boolean
+
+    Task:
+      type: object
+      properties:
+        taskId:
+          type: string
+        isCompleted:
+          type: boolean
+        taskDisplayValue:
+          type: string
+    
+    updateTaskResponse:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 200
+        taskId:
+          type: string
+          example: 5dbac45a3b200a4ae3d30755
+        message:
+          type: string
+          example: Task Updated successfully
+  responses:
+    "400":
+      description: Validation Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    "404":
+      description: Not Found Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    "500":
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+            
+  parameters:
+    candidateId:
+      in: path
+      name: candidateId
+      schema:
+        type: string
+      description: The Id of the Candidate to perform the operation on
+      required: true
+    clientContactId:
+      in: query
+      name: clientContactId
+      schema:
+        type: string
+      description: The Id of the Client Contact to perform the operation on
+      required: true
+    isAuthorized:
+      in: query
+      name: isAuthorized
+      schema:
+        type: boolean
+      description: Specifies whether the transferee is authorized or not
+      required: true
+    searchtext:
+      in: path
+      name: searchtext
+      schema:
+        type: string
+      description: The text to search cities with
+      required: true
+    clientId:
+      in: query
+      name: clientId
+      schema:
+        type: string
+      description: The Id of the client to perform the operation on
+      required: true
+    skip:
+      in: query
+      name: skip
+      schema:
+        type: number
+      description: Number of entries to be skipped
+      required: false
+    limit:
+      in: query
+      name: limit
+      schema:
+        type: number
+      description: Number of entries to be fetched
+      required: false
+    client:
+      in: path
+      name: client
+      schema:
+        type: string
+      description: The Id of the client to perform the operation on
+      required: true
