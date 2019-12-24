@@ -1,13 +1,12 @@
 import express, { Router } from "express"
 import request from "supertest"
-import { applyMiddleware, applyRoutes } from "../../utils"
-import middleware from "../../middleware"
-import errorHandlers from "../../middleware/errorHandlers"
-import routes from "../../services/order/routes"
-import database from '../../utils/database'
-import {orderModel} from '../../services/order/models'
-import { Order, Items } from "./interfaces"
-import { updateOrder } from "./OrderController"
+import { applyMiddleware, applyRoutes } from "../../../utils"
+import middleware from "../../../middleware"
+import errorHandlers from "../../../middleware/errorHandlers"
+import routes from "../routes"
+import database from '../../../utils/database'
+import {orderModel} from '../models'
+import { Order, Items } from "../interfaces"
 
 describe("routes", () => {
   let testOrder = <Order>{
